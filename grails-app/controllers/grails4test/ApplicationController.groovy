@@ -1,23 +1,18 @@
 package grails4test
 
-import grails.core.GrailsApplication
-import grails.plugins.GrailsPluginManager
-import grails.plugins.PluginManagerAware
 import software.amazon.awssdk.services.quicksight.QuickSightClient
 import software.amazon.awssdk.services.quicksight.model.*
 
-class ApplicationController implements PluginManagerAware {
-
-    GrailsApplication grailsApplication
-    GrailsPluginManager pluginManager
+class ApplicationController {
 
     def index(String awsAccountId, String email) {
+        if (!awsAccountId || !email) {
+            render "'awsAccountId' and 'email' must be specified in the URL.<br/><br/>" +
+                "Format: http://localhost:8080/?awsAccountId=123456789012&email=john.doe@company.com"
+            return
+        }
         String url = fetchEmbedUrl(awsAccountId, email)
         render "<a href='$url' target='_blank'>Dashboard</a>"
-    }
-
-    def metadata() {
-        [grailsApplication: grailsApplication, pluginManager: pluginManager]
     }
 
     private String fetchEmbedUrl(String awsAccountId, String email) {
